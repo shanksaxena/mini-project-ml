@@ -10,7 +10,6 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer
 import matplotlib.pyplot as plt
 import seaborn as sns
-import os
 
 # Load and preprocess dataset
 file_path = "IPL_Data_2015.csv"
@@ -60,53 +59,83 @@ best_model_data = min(model_metrics, key=lambda x: x["RMSE"])
 best_model_name = best_model_data["Model"]
 best_model = models[best_model_name]
 
-# Streamlit App Interface
-st.title("IPL Auction Price Predictor")
-st.markdown("## Predict the auction price for IPL players based on their performance stats")
+# Streamlit App Interface with Improved IPL Theme Colors
+st.markdown(
+    """
+    <style>
+    /* Page Background */
+    .stApp {
+        background-color: #1e3a8a; /* Deep blue for main background */
+        color: #ffffff; /* White text for readability */
+        background-image: url("https://path_to_your_trophy_image.png");
+        background-size: cover;
+        background-attachment: fixed;
+    }
+    /* Titles */
+    .title {
+        color: #ffcc00; /* Gold color for main titles */
+        text-align: center;
+        font-size: 3em;
+        font-weight: bold;
+    }
+    .subtitle {
+        color: #e0e7ff; /* Light blue-white for subtitles */
+        text-align: center;
+        font-size: 1.5em;
+        font-weight: bold;
+    }
+    /* Input Fields */
+    .stTextInput, .stNumberInput, .stSelectbox {
+        color: #1e3a8a; /* Deep blue for text input */
+        background-color: #e0e7ff; /* Light blue-white for background */
+    }
+    /* Buttons */
+    .stButton>button {
+        background-color: #ffcc00; /* Gold background */
+        color: #1e3a8a; /* Blue text */
+        border-radius: 10px;
+        border: none;
+        font-weight: bold;
+    }
+    .stButton>button:hover {
+        background-color: #e0e7ff; /* Light blue-white on hover */
+        color: #1e3a8a; /* Deep blue text */
+    }
+    /* Sidebar */
+    .sidebar .sidebar-content {
+        background-color: #1e3a8a; /* Deep blue for sidebar */
+        color: #ffffff; /* White text for readability */
+    }
+    /* Dataframes */
+    .dataframe {
+        color: #1e3a8a; /* Deep blue text */
+        background-color: #e0e7ff; /* Light blue-white for background */
+        border: 1px solid #ffcc00; /* Gold border */
+    }
+    /* Model Comparison Table */
+    .stTable td, .stTable th {
+        color: #1e3a8a; /* Deep blue text */
+        background-color: #e0e7ff; /* Light blue-white background */
+        border: 1px solid #ffcc00; /* Gold border */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
-# Team images for background
-team_images = {
-    "Chennai Super Kings": "CSK.png",
-    "Delhi Capitals": "DC.png",
-    "Gujarat Titans": "GT.png",
-    "Mumbai Indians": "MI.png",
-    "Rajasthan Royals": "RR.png",
-    "Royal Challengers Bangalore": "RCB.png",
-    "Sunrisers Hyderabad": "SRH.png",
-}
-
-# Create a selection for the carousel index
-carousel_index = st.slider("Select Team", 0, len(team_images) - 1, 0)
-
-# Show the selected team logo
-team_list = list(team_images.keys())
-selected_team = team_list[carousel_index]
-st.image(team_images[selected_team], caption=selected_team, use_column_width=True)
+# Page Title and Subheading
+st.markdown("<h1 class='title'>IPL Auction Price Predictor</h1>", unsafe_allow_html=True)
+st.markdown("<h3 class='subtitle'>Predict IPL Player Prices with Performance Stats</h3>", unsafe_allow_html=True)
 
 # Player role selection
 player_role = st.selectbox("Select Player Role", ["Batsman", "Bowler", "All-Rounder"])
 
 # Define input fields based on player role
 batsman_fields = [
-    "BAT",
-    "BAT*SR",
-    "BAT*RUN-S",
-    "BAT*T-RUNS",
-    "BAT*ODI-RUNS",
-    "T-RUNS",
-    "SIXERS",
-    "AVE",
+    "BAT", "BAT*SR", "BAT*RUN-S", "BAT*T-RUNS", "BAT*ODI-RUNS", "T-RUNS", "SIXERS", "AVE",
 ]
 bowler_fields = [
-    "BOW",
-    "BOW*ECO",
-    "BOW*SR-BL",
-    "BOW*WK-I",
-    "BOW*WK-O",
-    "T-WKTS",
-    "RUNS-C",
-    "WKTS",
-    "ECON",
+    "BOW", "BOW*ECO", "BOW*SR-BL", "BOW*WK-I", "BOW*WK-O", "T-WKTS", "RUNS-C", "WKTS", "ECON",
 ]
 all_rounder_fields = batsman_fields + bowler_fields
 
@@ -172,9 +201,4 @@ if st.button("Predict Auction Price"):
     ax.set_xlabel("Actual Prices")
     ax.set_ylabel("Predicted Prices")
     st.pyplot(fig)
-
-    # Display metrics for the best model
-    st.write(f"### Best Model ({best_model_name}) Metrics")
-    st.write(f"- RMSE: {best_model_data['RMSE']:.2f}")
-    st.write(f"- MAE: {best_model_data['MAE']:.2f}")
-    st.write(f"- R² Score: {best_model_data['R² Score']:.2f}")
+    
